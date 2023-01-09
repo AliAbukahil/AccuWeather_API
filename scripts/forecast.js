@@ -1,40 +1,45 @@
-// forecast.js is for interacting with the API
-const API_KEY = "AqhEW2ZidL09A5tzwxg8AY5GVADJzqfW";
+class Forecast {
+  constructor() {
+    // forecast.js is for interacting with the API
+    this.API_KEY = "AqhEW2ZidL09A5tzwxg8AY5GVADJzqfW";
+    this.weatherURI =
+      "http://dataservice.accuweather.com/currentconditions/v1/";
+    this.cityURI =
+      "http://dataservice.accuweather.com/locations/v1/cities/search";
+  }
 
-// get weather information
-const getWeather = async (id) => {
-  const base = "http://dataservice.accuweather.com/currentconditions/v1/";
+  // update city method
+  async updateCity(city) {
+    const cityDetails = await this.getCity(city);
+    const weather = await this.getWeather(cityDetails.Key);
+    return {
+      // cityDetails: cityDetails,
+      // weather: weather,
+      /* ** Object shorthand notation:** */
+      cityDetails,
+      weather,
+    };
+  }
 
-  const query = `${id}?apikey=${API_KEY}`;
+  // Get city information method
+  async getCity(city) {
+    const query = `?apikey=${this.API_KEY}&q=${city}`;
 
-  const response = await fetch(`${base}${query}`);
+    const response = await fetch(`${this.cityURI}${query}`);
 
-  const data = await response.json();
+    const data = await response.json();
 
-  return data[0];
-};
+    return data[0];
+  }
 
-// Get city information
-const getCity = async (city) => {
-  const base_url =
-    "http://dataservice.accuweather.com/locations/v1/cities/search";
+  // get weather information method
+  async getWeather(id) {
+    const query = `${id}?apikey=${this.API_KEY}`;
 
-  const query = `?apikey=${API_KEY}&q=${city}`;
+    const response = await fetch(`${this.weatherURI}${query}`);
 
-  const response = await fetch(`${base_url}${query}`);
+    const data = await response.json();
 
-  const data = await response.json();
-
-  return data[0];
-};
-
-// getCity("hamburg")
-//   .then((data) => {
-//     return getWeather(data.Key);
-//   })
-//   .then((data) => {
-//     console.log(data);
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   });
+    return data[0];
+  }
+}
